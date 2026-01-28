@@ -15,30 +15,11 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    try {
-      console.log('Attempting login with:', { email, password })
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await res.json()
-      console.log('Login response:', data)
-
-      if (res.ok) {
-        localStorage.setItem('token', data.token)
-        console.log('Token saved, redirecting to admin...')
-        window.location.href = '/admin' // Force redirect
-      } else {
-        setError(data.message || 'Login failed')
-      }
-    } catch (err) {
-      console.error('Login error:', err)
-      setError('Network error')
-    } finally {
-      setLoading(false)
-    }
+    // Mock login - just redirect to admin
+    setTimeout(() => {
+      localStorage.setItem('token', 'mock-token')
+      window.location.href = '/admin'
+    }, 1000)
   }
 
   return (
