@@ -11,11 +11,28 @@ interface Story {
   language: string
 }
 
+interface NewStory {
+  title: string
+  content: string
+  language: string
+  userId: string
+}
+
 export default function StoriesManagement() {
   const [stories, setStories] = useState<Story[]>([])
   const [loading, setLoading] = useState(true)
   const [languageFilter, setLanguageFilter] = useState('')
   const [dateFilter, setDateFilter] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingStory, setEditingStory] = useState<Story | null>(null)
+  const [newStory, setNewStory] = useState<NewStory>({
+    title: '',
+    content: '',
+    language: 'EN',
+    userId: '1'
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     fetchStories()
@@ -39,6 +56,76 @@ export default function StoriesManagement() {
   const handleDelete = async (storyId: string) => {
     if (!confirm('Are you sure you want to delete this story?')) return
     setStories(stories.filter(story => story._id !== storyId))
+  }
+
+  const handleAddStory = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newStory.title.trim() || !newStory.content.trim()) {
+      alert('Please fill in all required fields')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      // Simulate API call
+      const story: Story = {
+        _id: Date.now().toString(),
+        title: newStory.title,
+        content: newStory.content,
+        language: newStory.language,
+        userId: newStory.userId,
+        createdAt: new Date().toISOString()
+      }
+      
+      setStories([story, ...stories])
+      setShowAddModal(false)
+      setNewStory({ title: '', content: '', language: 'EN', userId: '1' })
+      alert('Story added successfully!')
+    } catch (error) {
+      console.error('Error adding story:', error)
+      alert('Error adding story. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const closeModal = () => {
+    setShowAddModal(false)
+    setShowEditModal(false)
+    setEditingStory(null)
+    setNewStory({ title: '', content: '', language: 'EN', userId: '1' })
+  }
+
+  const handleEditStory = (story: Story) => {
+    setEditingStory(story)
+    setNewStory({
+      title: story.title,
+      content: story.content,
+      language: story.language,
+      userId: story.userId
+    })
+    setShowEditModal(true)
+  }
+
+  const handleUpdateStory = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newStory.title.trim() || !newStory.content.trim() || !editingStory) return
+
+    setIsSubmitting(true)
+    try {
+      const updatedStories = stories.map(story => 
+        story._id === editingStory._id 
+          ? { ...story, title: newStory.title, content: newStory.content, language: newStory.language }
+          : story
+      )
+      setStories(updatedStories)
+      closeModal()
+      alert('Story updated successfully!')
+    } catch (error) {
+      alert('Error updating story. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const filteredStories = stories.filter(story => {
@@ -98,7 +185,13 @@ export default function StoriesManagement() {
             </div>
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              + Add Story
+            </button>
             <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
               <span className="text-sm text-gray-600">Total: </span>
               <span className="font-semibold text-gray-900">{stories.length}</span>
@@ -153,7 +246,13 @@ export default function StoriesManagement() {
                       Created: {new Date(story.createdAt).toLocaleString()}
                     </div>
                   </div>
-                  <div className="ml-4 flex-shrink-0">
+                  <div className="ml-4 flex-shrink-0 flex gap-2">
+                    <button
+                      onClick={() => handleEditStory(story)}
+                      className="bg-blue-100 text-blue-800 hover:bg-blue-200 px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleDelete(story._id)}
                       className="bg-red-100 text-red-800 hover:bg-red-200 px-4 py-2 text-sm font-medium rounded-lg transition-colors"
@@ -180,6 +279,123 @@ export default function StoriesManagement() {
           </div>
         )}
       </div>
+
+      {/* Add/Edit Story Modal */}
+      {(showAddModal || showEditModal) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {showEditModal ? 'Edit Story' : 'Add New Story'}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <form onSubmit={showEditModal ? handleUpdateStory : handleAddStory} className="p-6">
+              <div className="space-y-6">
+                {/* Title Field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Story Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={newStory.title}
+                    onChange={(e) => setNewStory({ ...newStory, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter story title"
+                    required
+                  />
+                </div>
+
+                {/* Language Field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Language *
+                  </label>
+                  <select
+                    value={newStory.language}
+                    onChange={(e) => setNewStory({ ...newStory, language: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="EN">English</option>
+                    <option value="FR">French</option>
+                    <option value="AR">Arabic</option>
+                    <option value="ES">Spanish</option>
+                    <option value="DE">German</option>
+                    <option value="IT">Italian</option>
+                    <option value="PT">Portuguese</option>
+                    <option value="RU">Russian</option>
+                    <option value="JA">Japanese</option>
+                    <option value="KO">Korean</option>
+                    <option value="ZH">Chinese</option>
+                    <option value="HI">Hindi</option>
+                  </select>
+                </div>
+
+                {/* Content Field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Story Content *
+                  </label>
+                  <textarea
+                    value={newStory.content}
+                    onChange={(e) => setNewStory({ ...newStory, content: e.target.value })}
+                    rows={8}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                    placeholder="Write your story content here..."
+                    required
+                  />
+                  <div className="mt-1 text-sm text-gray-500">
+                    {newStory.content.length} characters
+                  </div>
+                </div>
+
+                {/* User ID Field (Hidden for now, can be made visible if needed) */}
+                <input
+                  type="hidden"
+                  value={newStory.userId}
+                  onChange={(e) => setNewStory({ ...newStory, userId: e.target.value })}
+                />
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !newStory.title.trim() || !newStory.content.trim()}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      {showEditModal ? 'Updating...' : 'Adding...'}
+                    </div>
+                  ) : (
+                    showEditModal ? 'Update Story' : 'Add Story'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 }
