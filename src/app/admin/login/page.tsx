@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
 
   const handleLogin = () => {
     if (email && password) {
-      window.location.href = 'http://localhost:3001/admin'
+      window.location.href = '/admin'
     }
   }
 
