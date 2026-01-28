@@ -26,15 +26,15 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-900 shadow-2xl fixed h-full z-10">
-        <div className="p-6 border-b border-blue-800">
+      <div className="w-64 bg-slate-900 shadow-2xl fixed h-full z-10">
+        <div className="p-6 border-b border-slate-700">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-700 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">H</span>
             </div>
             <div className="ml-3">
               <h1 className="text-xl font-bold text-white">HKILI</h1>
-              <p className="text-sm text-blue-300">Admin Panel</p>
+              <p className="text-sm text-slate-400">Admin Panel</p>
             </div>
           </div>
         </div>
@@ -43,8 +43,8 @@ export default function AdminLayout({
             href="/admin" 
             className={`flex items-center px-4 py-3 mb-2 rounded-xl font-medium transition-colors ${
               isActive('/admin') 
-                ? 'text-white bg-blue-700' 
-                : 'text-blue-300 hover:text-white hover:bg-blue-800'
+                ? 'text-white bg-slate-800' 
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,8 +56,8 @@ export default function AdminLayout({
             href="/admin/users" 
             className={`flex items-center px-4 py-3 mb-2 rounded-xl font-medium transition-colors ${
               isActive('/admin/users') 
-                ? 'text-white bg-blue-700' 
-                : 'text-blue-300 hover:text-white hover:bg-blue-800'
+                ? 'text-white bg-slate-800' 
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,8 +69,8 @@ export default function AdminLayout({
             href="/admin/stories" 
             className={`flex items-center px-4 py-3 mb-2 rounded-xl font-medium transition-colors ${
               isActive('/admin/stories') 
-                ? 'text-white bg-blue-700' 
-                : 'text-blue-300 hover:text-white hover:bg-blue-800'
+                ? 'text-white bg-slate-800' 
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,8 +82,8 @@ export default function AdminLayout({
             href="/admin/characters" 
             className={`flex items-center px-4 py-3 mb-2 rounded-xl font-medium transition-colors ${
               isActive('/admin/characters') 
-                ? 'text-white bg-blue-700' 
-                : 'text-blue-300 hover:text-white hover:bg-blue-800'
+                ? 'text-white bg-slate-800' 
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,8 +95,8 @@ export default function AdminLayout({
             href="/admin/settings" 
             className={`flex items-center px-4 py-3 mb-2 rounded-xl font-medium transition-colors ${
               isActive('/admin/settings') 
-                ? 'text-white bg-blue-700' 
-                : 'text-blue-300 hover:text-white hover:bg-blue-800'
+                ? 'text-white bg-slate-800' 
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
