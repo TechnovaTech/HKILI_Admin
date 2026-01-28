@@ -47,7 +47,7 @@ export default function StoriesManagement() {
     return matchesLanguage && matchesDate
   })
 
-  const uniqueLanguages = [...new Set(stories.map(story => story.language))]
+  const uniqueLanguages = Array.from(new Set(stories.map(story => story.language)))
 
   if (loading) {
     return (
